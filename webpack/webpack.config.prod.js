@@ -6,6 +6,7 @@ import cssModulesValues from 'postcss-modules-values';
 
 const root = process.cwd();
 const clientInclude = [path.join(root, 'src', 'client'), path.join(root, 'src', 'universal'), /joi/, /isemail/, /hoek/, /topo/];
+const globalCSS = path.join(root, 'src', 'universal', 'styles','global');
 
 /*code can be: vendor-common, vendor-page-specific, meatier-common, meatier-page-specific
  * a small, fast landing page means only include the common from vendor + meatier
@@ -18,18 +19,18 @@ const clientInclude = [path.join(root, 'src', 'client'), path.join(root, 'src', 
 const vendor = [
   'react',
   'react-dom',
-  'react-router',
-  'react-redux',
-  'redux',
-  'redux-thunk',
-  'redux-form',
+  //'react-router',
+  //'react-redux',
+  //'redux',
+  //'redux-thunk',
+  //'redux-form',
   'joi'
 ];
 
 const prefetches = [
   'react-dnd/lib/index.js',
   'joi/lib/index.js',
-  'universal/containers/Kanban/KanbanContainer.js'
+  'universal/modules/kanban/containers/Kanban/KanbanContainer.js'
 ]
 
 const prefetchPlugins = prefetches.map(specifier => new webpack.PrefetchPlugin(specifier));
@@ -64,7 +65,7 @@ export default {
     }),
     new webpack.optimize.AggressiveMergingPlugin(),
     new webpack.optimize.MinChunkSizePlugin({minChunkSize: 50000}),
-    new webpack.optimize.UglifyJsPlugin({compressor: {warnings: false}}),
+    new webpack.optimize.UglifyJsPlugin({compressor: {warnings: false}, comments: /(?:)/}),
     new AssetsPlugin({path: path.join(root, 'build'), filename: 'assets.json'}),
     new webpack.NoErrorsPlugin(),
     new webpack.DefinePlugin({
@@ -82,7 +83,13 @@ export default {
       {
         test: /\.css$/,
         loader: 'fake-style!css?modules&importLoaders=1&localIdentName=[name]_[local]_[hash:base64:5]!postcss',
-        include: clientInclude
+        include: clientInclude,
+        exclude: globalCSS
+      },
+      {
+        test: /\.css$/,
+        loader: 'fake-style!css',
+        include: globalCSS
       },
       {
         test: /\.js$/,

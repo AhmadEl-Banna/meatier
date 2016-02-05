@@ -20,7 +20,7 @@ export default class Html extends Component {
     const root = PROD && renderToString(
         <Provider store={store}>
           <RouterContext {...renderProps} />
-        </Provider>)
+        </Provider>);
     return (
       <html>
       <head>
@@ -29,12 +29,11 @@ export default class Html extends Component {
         <title>{title}</title>
       </head>
       <body>
+      <script dangerouslySetInnerHTML={{__html: initialState}}/>
       {PROD ? <div id="root" dangerouslySetInnerHTML={{__html: root}}></div> : <div id="root"></div>}
-
       {PROD && <script dangerouslySetInnerHTML={{__html: manifest.text}}/>}
       {PROD && <script src={vendor.js}/>}
       <script src={PROD ? app.js : '/static/app.js'}/>
-      <script dangerouslySetInnerHTML={{__html: initialState}}/>
       </body>
       </html>
     );

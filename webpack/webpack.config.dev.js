@@ -4,6 +4,7 @@ import cssModulesValues from 'postcss-modules-values';
 
 const root = process.cwd();
 const clientInclude = [path.join(root, 'src', 'client'), path.join(root, 'src', 'universal')];
+const globalCSS = path.join(root, 'src', 'universal', 'styles','global');
 
 const prefetches = [
   'react-dnd/lib/index.js',
@@ -11,10 +12,12 @@ const prefetches = [
   'react-dock/lib/index.js',
   'lodash/object/mapValues.js',
   'joi/lib/index.js',
-  'universal/containers/Kanban/KanbanContainer.js',
+  'universal/modules/kanban/containers/Kanban/KanbanContainer.js',
   'redux-devtools-log-monitor/lib/index.js'
 ]
 const prefetchPlugins = prefetches.map(specifier => new webpack.PrefetchPlugin(specifier));
+
+
 
 const babelQuery = {
   "plugins": [
@@ -33,6 +36,7 @@ const babelQuery = {
 }
 
 export default {
+  //devtool: 'source-maps',
   devtool: 'eval',
   context: path.join(root, "src"),
   entry: {
@@ -73,18 +77,22 @@ export default {
       {test: /\.(eot|ttf|wav|mp3)$/, loader: 'file-loader'},
       {
         test: /\.css$/,
+        loader: 'style!css',
+        include: globalCSS
+      },
+      {
+        test: /\.css$/,
         loader: 'style!css?modules&importLoaders=1&localIdentName=[name]_[local]_[hash:base64:5]!postcss',
+        exclude: globalCSS,
         include: clientInclude
       },
+
       {
         test: /\.js$/,
         loader: 'babel',
-        include: clientInclude,
         query: babelQuery,
+        include: clientInclude
       }
     ]
-  },
-  resolveLoader: {
-    root: path.join(root, 'src')
   }
 };

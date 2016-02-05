@@ -1,17 +1,5 @@
-export function addImmutable(newAction, subState) {
-  return [...subState, newAction]
-}
+import {ensureState} from 'redux-optimistic-ui';
 
-export function updateImmutable(newAction, subState) {
-  return subState.map(event =>
-      event.id === newAction.id ? Object.assign({},event,newAction) : event
-  )
-}
-
-export function deleteImmutable(id, subState) {
-  return subState.filter(event => event.id !== id);
-}
-
-export function findInState(subState, id) {
-  return subState.findIndex(event => event.id === id);
+export function getFormState(state, reduxMountPoint) {
+  return ensureState(state).get(reduxMountPoint);
 }
